@@ -1,0 +1,147 @@
+<!-- Ported by Martin_MMC -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="https://cdn.jsdelivr.net/gh/marty-games/mga-html5@main/tomb-raider-demo-remake/">
+    <meta name="robots" content="noindex,follow">
+    <title>Tomb Raider</title>
+</head>
+
+<body style="margin:0">
+    <span id="status">Starting...</span>
+    <canvas id="canvas" width="854" height="480" oncontextmenu="event.preventDefault()"></canvas><br>
+
+    <script type='text/javascript'>
+        var statusElement = document.getElementById('status');
+        var canvasElement = document.getElementById('canvas');
+        var proc;
+
+        var Module = {
+            TOTAL_MEMORY: 64 * 1024 * 1024,
+            preRun: [],
+            postRun: [],
+            print: (function() {
+                return function(text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                    console.log(text);
+                };
+            })(),
+            printErr: function(text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                if (0) {
+                    dump(text + '\n');
+                } else {
+                    console.error(text);
+                }
+            },
+            canvas: (function() {
+                canvasElement.addEventListener("webglcontextlost", function(e) {
+                    alert('WebGL context lost. You will need to reload the page.');
+                    e.preventDefault();
+                }, false);
+                return canvasElement;
+            })(),
+            setStatus: function(text) {
+                if (!Module.setStatus.last) Module.setStatus.last = {
+                    time: Date.now(),
+                    text: ''
+                };
+                if (text === Module.setStatus.text) return;
+                statusElement.innerHTML = text;
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            },
+        };
+
+        function snd_init() {
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            var ctx = new(window.AudioContext || window.webkitAudioContext)();
+            var count = 2048;
+            var rate = 44100 / ctx.sampleRate;
+            var framesCount = Math.ceil(count * rate);
+            var frames = Module._malloc(framesCount * 4); // interleaved short L, R
+            proc = ctx.createScriptProcessor(count, 2, 2);
+            proc.onaudioprocess = function(e) {
+                var L = e.outputBuffer.getChannelData(0),
+                    R = e.outputBuffer.getChannelData(1);
+                Module.ccall('snd_fill', 'null', ['number', 'number'], [frames, framesCount]);
+                for (var i = 0; i < count; i++) {
+                    var index = frames + Math.floor(i * rate) * 4; // 4 is sample frame stride in bytes
+                    L[i] = Module.getValue(index, 'i16') / 0x8000;
+                    R[i] = Module.getValue(index + 2, 'i16') / 0x8000;
+                }
+            }
+            proc.connect(ctx.destination);
+        }
+
+        var gl = canvasElement.getContext("webgl", {
+            antialias: false
+        }) || canvasElement.getContext("experimental-webgl", {
+            antialias: false
+        });
+
+        Module.setStatus('Downloading...');
+        window.onerror = function(event) {
+            Module.setStatus('Exception thrown, see JavaScript console');
+            //spinnerElement.style.display = 'none';
+            document.getElementById('info').innerHTML = event;
+            Module.setStatus = function(text) {
+                if (text) Module.printErr('[post-exception status] ' + text);
+            };
+        };
+    </script>
+    <script>
+        (function() {
+            var memoryInitializer = 'OpenLara.js.mem';
+            if (typeof Module['locateFile'] === 'function') {
+                memoryInitializer = Module['locateFile'](memoryInitializer);
+            } else if (Module['memoryInitializerPrefixURL']) {
+                memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
+            }
+            var xhr = Module['memoryInitializerRequest'] = new XMLHttpRequest();
+            xhr.open('GET', memoryInitializer, true);
+            xhr.responseType = 'arraybuffer';
+            xhr.send(null);
+        })();
+
+        var script = document.createElement('script');
+        script.src = "OpenLara.js";
+        document.body.appendChild(script);
+
+        window.onbeforeunload = function() { // Ctrl+W
+            return "Really want to quit the game?";
+        };
+
+        function readLevel(event, home) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var size = reader.result.byteLength;
+                var data = Module._malloc(size);
+                Module.writeArrayToMemory(new Uint8Array(reader.result), data);
+                Module.ccall('game_level_load', 'null', ['number', 'number', 'number'], [data, size, home]);
+            };
+            reader.readAsArrayBuffer(event.target.files[0]);
+        }
+    </script>
+
+    <audio autoplay loop>
+        <source src="05.ogg" type="audio/ogg">
+    </audio>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"2cf565c5b1dc45228d3a7cc18aab5fac","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+<script>
+    window.onload = function() {
+        window.focus();
+    }
+
+    window.onclick = function() {
+        window.focus();
+    }
+</script>
+
+</html>

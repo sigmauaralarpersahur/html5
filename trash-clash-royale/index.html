@@ -1,0 +1,76 @@
+<!-- Ported by Martin_MMC -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <base href="https://gcore.jsdelivr.net/gh/marty-games/mga-html5x@main/trash-clash-royale/">
+</head>
+
+<body style="margin: 0;">
+
+    <div class="applet_div">
+        <script type="text/javascript" charset="utf-8" src="javascript_attachments/0020/0865/scenario27793.js"></script>
+        <script type="text/javascript" charset="utf-8" src="javascript/jszip.min.js"></script>
+        <script type="text/javascript" defer="yes">
+            function pre_main() {
+                storage_params = [];
+                storage_params["storage.standalone"] = true;
+                storage_params["storage.passcode"] = "0000000000000000";
+                storage_params["storage.scenarioId"] = 27793;
+                storage_params["storage.userId"] = -1;
+                storage_params["storage.userName"] = "";
+
+                var appletFile = "https://raw.githack.com/marty-games/mga-html5x/main/trash-clash-royale/applet_attachments/0005/8405/greenfoot10726518013480945778.jar";
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", appletFile);
+                xhr.responseType = "arraybuffer";
+                xhr.onload = function() {
+                    JSZip.loadAsync(xhr.response).then(function(zip) {
+                        window.zip = zip;
+                        main();
+                        // Wait half a second for initialisation to complete before starting:
+                        window.setTimeout(function() {
+                            runButton = document.getElementById("playButton");
+                            // Only simulate run click if scenario not auto-started:
+                            if (runButton.textContent == "Run") {
+                                runButton.click();
+                            }
+                        }, 500);
+                    });
+                };
+
+                xhr.onerror = function() {
+                    // ??
+                    alert("Failed to load applet.");
+                };
+
+                xhr.send();
+            }
+            pre_main();
+        </script>
+        <div style="display: inline-block;">
+            <div>
+                <div style="width: 100%;">
+                    <!-- enclosing div for Greenfoot.ask() panel: -->
+                    <div style="display: inline-block; touch-action: pinch-zoom;">
+                        <canvas id="scenarioCanvas" width="1012" height="662">
+                            Your browser does not support the canvas tag.
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- controls are present but invisible in fullscreen/embedded mode: -->
+            <div style="visibility: hidden;">
+                <button disabled="true" id="playButton" style="width: 5em;">Run</button>
+                <button disabled="true" id="resetButton" style="width: 5em;">Reset</button>
+                <input type="range" id="speedSlider" min=0 max=99 disabled="true" style="vertical-align: middle;"></input>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
