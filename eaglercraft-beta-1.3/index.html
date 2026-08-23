@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Eaglercraft Beta 1.3</title>
+</head>
+
+<body>
+    <script>
+        async function loadAndRun() {
+            const urls = [
+                "https://cdn.jsdelivr.net/gh/martinmmcyt/minecraft@main/beta-1.3/index.html"
+            ];
+
+            let fullHtml = "";
+            for (const u of urls) {
+                const res = await fetch(u);
+                fullHtml += await res.text();
+            }
+
+            document.open();
+            document.write(fullHtml);
+            document.close();
+        }
+
+        loadAndRun();
+    </script>
+</body>
+
+</html>
