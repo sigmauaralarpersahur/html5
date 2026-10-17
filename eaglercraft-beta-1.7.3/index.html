@@ -2,30 +2,26 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eaglercraft Beta 1.7.3</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/martinmmcyt/minecraft@main/shared/loader.js"></script>
+    <script type="text/javascript">
+        window.__eaglercraftLoaderClient = {
+            container: "game_frame",
+            name: "Eaglercraft Beta 1.7.3",
+            file: "net.peytonplays585.minecraft.b1_7_3",
+            cid: "bafybeigrz6dbgeqabfnq6zm4vngrdabkifmsvhnvhjwsxlyf24wg2hmaz4",
+            download: "https://cdn.jsdelivr.net/gh/martinmmcyt/minecraft@main/beta-1.7.3/b1.7.3.gz",
+            path: "",
+            dlSize: 10656795,
+            gzip: true
+        };
+    </script>
+    <link type="image/png" rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/martinmmcyt/minecraft@main/shared/game.png" />
 </head>
 
-<body>
-    <script>
-        async function loadAndRun() {
-            const urls = [
-                "https://cdn.jsdelivr.net/gh/martinmmcyt/minecraft@main/beta-1.7.3/index.html"
-            ];
-
-            let fullHtml = "";
-            for (const u of urls) {
-                const res = await fetch(u);
-                fullHtml += await res.text();
-            }
-
-            document.open();
-            document.write(fullHtml);
-            document.close();
-        }
-
-        loadAndRun();
-    </script>
+<body style="margin:0px;width:100vw;height:100vh;overflow:hidden;" id="game_frame">
 </body>
 
 </html>
