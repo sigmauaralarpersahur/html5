@@ -2,26 +2,22 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Minecraft 1.8.8</title>
 </head>
 <body>
   <script>
     async function loadAndRun() {
       const urls = [
-        "https://gcore.jsdelivr.net/gh/MartinMMCyt/minecraft@main/1.8.8/EaglercraftX_1.8_u53_Offline_Signed.html"
-
+        "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-1.8.8/EaglercraftX_1.8_u53_Offline_Signed.html"
       ];
       let fullHtml = "";
       for (const u of urls) {
         const res = await fetch(u);
         fullHtml += await res.text();
       }
-
       document.open();
       document.write(fullHtml);
       document.close();
     }
-
     loadAndRun();
   </script>
 </body>
