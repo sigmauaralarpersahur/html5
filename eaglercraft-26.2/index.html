@@ -1,30 +1,107 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .loader-container {
+            text-align: center;
+            width: 300px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #4caf50;
+            transition: width 0.3s ease;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #aaa;
+        }
+    </style>
 </head>
+
 <body>
-  <script>
-    async function loadAndRun() {
-      const urls = [
-        "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part1",
-        "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part2",
-        "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part3",
-        "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part4"
 
-      ];
-      let fullHtml = "";
-      for (const u of urls) {
-        const res = await fetch(u);
-        fullHtml += await res.text();
-      }
+    <div class="loader-container">
+        <h2>Loading...</h2>
+        <div class="progress-bar-bg">
+            <div id="progress" class="progress-bar-fill"></div>
+        </div>
+        <div id="status">Starting download...</div>
+    </div>
 
-      document.open();
-      document.write(fullHtml);
-      document.close();
-    }
+    <script>
+        async function loadAndRun() {
+            const urls = [
+                "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part1",
+                "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part2",
+                "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part3",
+                "https://gcore.jsdelivr.net/gh/sigmauaralarpersahur/html5@main/eaglercraft-26.2/eaglercraft-26.2-zeus-skins.html.part4"
+            ];
 
-    loadAndRun();
-  </script>
+            const progressBar = document.getElementById("progress");
+            const statusText = document.getElementById("status");
+
+            let fullHtml = "";
+
+            for (let i = 0; i < urls.length; i++) {
+                statusText.innerText = `Downloading part ${i + 1} of ${urls.length}...`;
+
+                try {
+                    const res = await fetch(urls[i]);
+                    fullHtml += await res.text();
+                } catch (err) {
+                    statusText.innerText = `Error loading part ${i + 1}`;
+                    console.error(err);
+                    return;
+                }
+
+                const percent = Math.round(((i + 1) / urls.length) * 100);
+                progressBar.style.width = percent + "%";
+            }
+
+            statusText.innerText = "Launching...";
+
+            setTimeout(() => {
+                document.open();
+                document.write(fullHtml);
+                document.close();
+            }, 300);
+        }
+
+        loadAndRun();
+    </script>
 </body>
+
 </html>
